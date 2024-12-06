@@ -9,8 +9,8 @@ public class Main {
     public static void main(String[] args) {
         JsonDiff jsonDiff = new JsonDiff();
 
-        String simpleJson1 = "{\"name\": \"John\", \"age\": 25}";
-        String simpleJson2 = "{\"name\": \"John\", \"age\": 26, \"country\": \"USA\"}";
+        String jsonString1 = "{\"name\": \"John\", \"age\": 25}";
+        String jsonString2 = "{\"name\": \"John\", \"age\": 26, \"country\": \"USA\"}";
 
         String nestedJson1 = """
                 {
@@ -51,11 +51,15 @@ public class Main {
                 """;
 
         try {
-            JsonNode jsonNode1 = jsonDiff.parseJson(simpleJson1);
-            JsonNode jsonNode2 = jsonDiff.parseJson(simpleJson2);
+            JsonNode jsonNode1 = jsonDiff.parseJson(jsonString1);
+            JsonNode jsonNode2 = jsonDiff.parseJson(jsonString2);
 
-            System.out.println(" Case 4: JsonNode Comparison ");
+            System.out.println("JsonNode Comparison ");
             System.out.println(jsonDiff.getDiff(jsonNode1, jsonNode2));
+
+            boolean isNodesNotEqual = jsonDiff.isNotEqual(jsonNode1, jsonNode2);
+            System.out.println("Are JsonNode objects not equal? " + isNodesNotEqual);
+            
         } catch (IOException e) {
             System.err.println("Error parsing JSON nodes: " + e.getMessage());
         }
@@ -64,22 +68,35 @@ public class Main {
         String identicalJson2 = "{\"name\": \"Bob\", \"age\": 30}";
 
         try {
-            System.out.println("\n Case 1: Simple JSON Comparison ");
-            System.out.println(jsonDiff.getDiff(simpleJson1, simpleJson2));
+            System.out.println("\nSimple JSON Comparison ");
+            System.out.println(jsonDiff.getDiff(jsonString1, jsonString2));
 
-            System.out.println("\n Case 2: Nested JSON Object Comparison ");
+            System.out.println("\nNested JSON Object Comparison ");
             System.out.println(jsonDiff.getDiff(nestedJson1, nestedJson2));
 
-            System.out.println("\n Case 3: JSON Array Comparison ");
+            System.out.println("\nJSON Array Comparison ");
             System.out.println(jsonDiff.getDiff(arrayJson1, arrayJson2));
 
-            System.out.println("\n Case 5: Identical JSON Comparison ");
+            System.out.println("\nIdentical JSON Comparison ");
             String identicalDiff = jsonDiff.getDiff(identicalJson1, identicalJson2);
             if (identicalDiff.isEmpty()) {
                 System.out.println("No differences found!");
             } else {
                 System.out.println(identicalDiff);
             }
+
+            boolean isEqual = jsonDiff.isEqual(jsonString1, jsonString2);
+            System.out.println("\nJSON String 1 " + jsonString1);
+            System.out.println("JSON String 2 " + jsonString2);
+
+            System.out.println("\nAre JSONs equal? " + isEqual);
+
+            boolean isSubset = jsonDiff.isSubset(jsonString1, jsonString2);
+            System.out.println("Is JSON1 a subset of JSON2? " + isSubset);
+
+            boolean isNotEqual = jsonDiff.isNotEqual(jsonString1, jsonString2);
+            System.out.println("Are JSONs not equal? " + isNotEqual);
+            
         } catch (IOException e) {
             System.err.println("Error generating JSON diff: " + e.getMessage());
         }

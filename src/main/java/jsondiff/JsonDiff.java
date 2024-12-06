@@ -97,6 +97,45 @@ public class JsonDiff {
         return diffResult.toString();
     }
 
+    public boolean isEqual(String json1, String json2) throws IOException {
+        JsonNode node1 = parseJson(json1);
+        JsonNode node2 = parseJson(json2);
+        return isEqual(node1, node2);
+    }
+
+    public boolean isEqual(JsonNode node1, JsonNode node2) {
+        return node1.equals(node2);
+    }
+
+    public boolean isSubset(String json1, String json2) throws IOException {
+        JsonNode node1 = parseJson(json1);
+        JsonNode node2 = parseJson(json2);
+        return isSubset(node1, node2);
+    }
+
+    public boolean isSubset(JsonNode node1, JsonNode node2) {
+        Iterator<Map.Entry<String, JsonNode>> fields = node1.fields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> field = fields.next();
+            String key = field.getKey();
+            JsonNode value1 = field.getValue();
+            JsonNode value2 = node2.get(key);
+
+            if (value2 == null || !value1.equals(value2)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isNotEqual(String json1, String json2) throws IOException {
+        return !isEqual(json1, json2);
+    }
+
+    public boolean isNotEqual(JsonNode node1, JsonNode node2) {
+        return !isEqual(node1, node2);
+    }
+
     private String indent(String path) {
         int depth = path.isEmpty() ? 0 : path.split("\\.").length + path.split("\\[").length - 1;
         return "  ".repeat(depth);
