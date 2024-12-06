@@ -8,13 +8,18 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class JsonDiff {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static JsonNode parseJson(String jsonString) throws IOException {
+    private final ObjectMapper objectMapper;
+
+    public JsonDiff() {
+        this.objectMapper = new ObjectMapper();
+    }
+
+    public JsonNode parseJson(String jsonString) throws IOException {
         return objectMapper.readTree(jsonString);
     }
 
-    public static void compare(JsonNode node1, JsonNode node2, String path, StringBuilder diffResult) {
+    private void compareNodes(JsonNode node1, JsonNode node2, String path, StringBuilder diffResult) {
         Iterator<Map.Entry<String, JsonNode>> firstJsonFields = node1.fields();
 
         while (firstJsonFields.hasNext()) {
@@ -28,7 +33,7 @@ public class JsonDiff {
             if (value2 == null) {
                 diffResult.append("Missing in second JSON: ").append(currentPath).append("\n");
             } else if (value1.isObject() && value2.isObject()) {
-                compare(value1, value2, currentPath, diffResult);
+                compareNodes(value1, value2, currentPath, diffResult);
             } else if (!value1.equals(value2)) {
                 diffResult.append("Value mismatch at ").append(currentPath)
                         .append(": ").append(value1).append(" vs ").append(value2).append("\n");
@@ -46,12 +51,12 @@ public class JsonDiff {
         }
     }
 
-    public static String getDiff(String json1, String json2) throws IOException {
+    public String getDiff(String json1, String json2) throws IOException {
         JsonNode node1 = parseJson(json1);
         JsonNode node2 = parseJson(json2);
 
         StringBuilder diffResult = new StringBuilder();
-        compare(node1, node2, "", diffResult);
+        compareNodes(node1, node2, "", diffResult);
 
         return diffResult.toString();
     }
