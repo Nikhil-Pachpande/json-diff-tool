@@ -55,6 +55,10 @@ public class JsonDiff {
         JsonNode node1 = parseJson(json1);
         JsonNode node2 = parseJson(json2);
 
+        return getDiff(node1, node2);
+    }
+
+    public String getDiff(JsonNode node1, JsonNode node2) {
         StringBuilder diffResult = new StringBuilder();
         compareNodes(node1, node2, "", diffResult);
 
