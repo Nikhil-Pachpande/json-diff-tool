@@ -178,4 +178,82 @@ public class JsonDiffTest {
         assertFalse(diff.contains("Missing in second JSON"));
         assertFalse(diff.contains("Extra in second JSON"));
     }
+
+    @Test
+    public void testIsEqualWithIdenticalJson() throws IOException {
+        String json1 = "{\"name\": \"John\", \"age\": 25}";
+        String json2 = "{\"name\": \"John\", \"age\": 25}";
+
+        assertTrue(jsonDiff.isEqual(json1, json2), "Expected JSONs to be equal");
+    }
+
+    @Test
+    public void testIsEqualWithDifferentJson() throws IOException {
+        String json1 = "{\"name\": \"John\", \"age\": 25}";
+        String json2 = "{\"name\": \"John\", \"age\": 26}";
+
+        assertFalse(jsonDiff.isEqual(json1, json2), "Expected JSONs to be different");
+    }
+
+    @Test
+    public void testIsEqualWithJsonNodeObjects() throws IOException {
+        String json1 = "{\"name\": \"John\", \"age\": 25}";
+        String json2 = "{\"name\": \"John\", \"age\": 25}";
+
+        JsonNode node1 = jsonDiff.parseJson(json1);
+        JsonNode node2 = jsonDiff.parseJson(json2);
+
+        assertTrue(jsonDiff.isEqual(node1, node2), "Expected JSON nodes to be equal");
+    }
+
+    @Test
+    public void testIsSubsetWithSubsetJson() throws IOException {
+        String json1 = "{\"name\": \"John\"}";
+        String json2 = "{\"name\": \"John\", \"age\": 25}";
+
+        assertTrue(jsonDiff.isSubset(json1, json2), "Expected JSON1 to be a subset of JSON2");
+    }
+
+    @Test
+    public void testIsSubsetWithNonSubsetJson() throws IOException {
+        String json1 = "{\"name\": \"John\", \"gender\": \"female\"}";
+        String json2 = "{\"name\": \"John\", \"age\": 25}";
+
+        assertFalse(jsonDiff.isSubset(json1, json2), "Expected JSON1 not to be a subset of JSON2");
+    }
+
+    @Test
+    public void testIsSubsetWithJsonNodeObjects() throws IOException {
+        String json1 = "{\"name\": \"John\"}";
+        String json2 = "{\"name\": \"John\", \"age\": 25}";
+
+        JsonNode node1 = jsonDiff.parseJson(json1);
+        JsonNode node2 = jsonDiff.parseJson(json2);
+
+        assertTrue(jsonDiff.isSubset(node1, node2), "Expected JSON node1 to be a subset of JSON node2");
+    }
+
+    @Test
+    public void testIsSubsetWithEmptyJson() throws IOException {
+        String json1 = "{}";
+        String json2 = "{\"name\": \"John\", \"age\": 25}";
+
+        assertTrue(jsonDiff.isSubset(json1, json2), "Expected empty JSON1 to be a subset of JSON2");
+    }
+
+    @Test
+    public void testIsEqualWithEmptyJson() throws IOException {
+        String json1 = "{}";
+        String json2 = "{}";
+
+        assertTrue(jsonDiff.isEqual(json1, json2), "Expected empty JSONs to be equal");
+    }
+
+    @Test
+    public void testIsSubsetWithIdenticalJson() throws IOException {
+        String json1 = "{\"name\": \"John\", \"age\": 25}";
+        String json2 = "{\"name\": \"John\", \"age\": 25}";
+
+        assertTrue(jsonDiff.isSubset(json1, json2), "Expected identical JSONs to be subsets of each other");
+    }
 }
