@@ -11,6 +11,11 @@ public class JsonDiff {
 
     private final ObjectMapper objectMapper;
 
+    private static final String RESET = "\u001B[0m";
+    private static final String RED = "\u001B[31m"; // For mismatches in both the JSON
+    private static final String YELLOW = "\u001B[33m"; // For missing fields
+    private static final String GREEN = "\u001B[32m"; // For extra fields
+
     public JsonDiff() {
         this.objectMapper = new ObjectMapper();
     }
@@ -26,8 +31,8 @@ public class JsonDiff {
             compareObjects(node1, node2, path, diffResult);
         } else if (!node1.equals(node2)) {
             diffResult.append(indent(path))
-                    .append("Value mismatch at ").append(path)
-                    .append(": ").append(node1).append(" vs ").append(node2).append("\n");
+                    .append(RED).append("Value mismatch at ").append(path)
+                    .append(": ").append(node1).append(" vs ").append(node2).append(RESET).append("\n");
         }
     }
 
@@ -44,7 +49,7 @@ public class JsonDiff {
 
             if (value2 == null) {
                 diffResult.append(indent(currentPath))
-                        .append("Missing in second JSON: ").append(currentPath).append("\n");
+                        .append(YELLOW).append("Missing in second JSON: ").append(currentPath).append(RESET).append("\n");
             } else {
                 compareNodes(value1, value2, currentPath, diffResult);
             }
@@ -57,7 +62,7 @@ public class JsonDiff {
             if (!node1.has(fieldName)) {
                 String currentPath = path.isEmpty() ? fieldName : path + "." + fieldName;
                 diffResult.append(indent(currentPath))
-                        .append("Extra in second JSON: ").append(currentPath).append("\n");
+                        .append(GREEN).append("Extra in second JSON: ").append(currentPath).append(RESET).append("\n");
             }
         }
     }
@@ -68,10 +73,10 @@ public class JsonDiff {
             String currentPath = path + "[" + i + "]";
             if (i >= array1.size()) {
                 diffResult.append(indent(currentPath))
-                        .append("Extra in second JSON: ").append(array2.get(i)).append("\n");
+                        .append(GREEN).append("Extra in second JSON: ").append(array2.get(i)).append(RESET).append("\n");
             } else if (i >= array2.size()) {
                 diffResult.append(indent(currentPath))
-                        .append("Missing in second JSON: ").append(array1.get(i)).append("\n");
+                        .append(YELLOW).append("Missing in second JSON: ").append(array1.get(i)).append(RESET).append("\n");
             } else {
                 compareNodes(array1.get(i), array2.get(i), currentPath, diffResult);
             }
