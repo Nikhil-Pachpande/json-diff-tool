@@ -20,6 +20,18 @@ public class JsonDiff {
     }
 
     private void compareNodes(JsonNode node1, JsonNode node2, String path, StringBuilder diffResult) {
+        if (node1.isArray() && node2.isArray()) {
+            compareArrays(node1, node2, path, diffResult);
+        } else if (node1.isObject() && node2.isObject()) {
+            compareObjects(node1, node2, path, diffResult);
+        } else if (!node1.equals(node2)) {
+            diffResult.append(indent(path))
+                    .append("Value mismatch at ").append(path)
+                    .append(": ").append(node1).append(" vs ").append(node2).append("\n");
+        }
+    }
+
+    private void compareObjects(JsonNode node1, JsonNode node2, String path, StringBuilder diffResult) {
         Iterator<Map.Entry<String, JsonNode>> firstJsonFields = node1.fields();
 
         while (firstJsonFields.hasNext()) {
@@ -31,12 +43,10 @@ public class JsonDiff {
             String currentPath = path.isEmpty() ? fieldName : path + "." + fieldName;
 
             if (value2 == null) {
-                diffResult.append("Missing in second JSON: ").append(currentPath).append("\n");
-            } else if (value1.isObject() && value2.isObject()) {
+                diffResult.append(indent(currentPath))
+                        .append("Missing in second JSON: ").append(currentPath).append("\n");
+            } else {
                 compareNodes(value1, value2, currentPath, diffResult);
-            } else if (!value1.equals(value2)) {
-                diffResult.append("Value mismatch at ").append(currentPath)
-                        .append(": ").append(value1).append(" vs ").append(value2).append("\n");
             }
         }
 
@@ -46,7 +56,24 @@ public class JsonDiff {
             String fieldName = field.getKey();
             if (!node1.has(fieldName)) {
                 String currentPath = path.isEmpty() ? fieldName : path + "." + fieldName;
-                diffResult.append("Extra in second JSON: ").append(currentPath).append("\n");
+                diffResult.append(indent(currentPath))
+                        .append("Extra in second JSON: ").append(currentPath).append("\n");
+            }
+        }
+    }
+
+    private void compareArrays(JsonNode array1, JsonNode array2, String path, StringBuilder diffResult) {
+        int maxLength = Math.max(array1.size(), array2.size());
+        for (int i = 0; i < maxLength; i++) {
+            String currentPath = path + "[" + i + "]";
+            if (i >= array1.size()) {
+                diffResult.append(indent(currentPath))
+                        .append("Extra in second JSON: ").append(array2.get(i)).append("\n");
+            } else if (i >= array2.size()) {
+                diffResult.append(indent(currentPath))
+                        .append("Missing in second JSON: ").append(array1.get(i)).append("\n");
+            } else {
+                compareNodes(array1.get(i), array2.get(i), currentPath, diffResult);
             }
         }
     }
@@ -63,5 +90,10 @@ public class JsonDiff {
         compareNodes(node1, node2, "", diffResult);
 
         return diffResult.toString();
+    }
+
+    private String indent(String path) {
+        int depth = path.isEmpty() ? 0 : path.split("\\.").length + path.split("\\[").length - 1;
+        return "  ".repeat(depth);
     }
 }
