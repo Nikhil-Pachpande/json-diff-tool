@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 
+/**
+ * Demo class to showcase the use of the methods in JsonDiff class
+ */
 public class Main {
 
     public static void main(String[] args) {
