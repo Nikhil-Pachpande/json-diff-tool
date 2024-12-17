@@ -1,6 +1,7 @@
 package jsondiff;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
@@ -54,8 +55,9 @@ public class Main {
                 """;
 
         try {
-            JsonNode jsonNode1 = jsonDiff.parseJson(jsonString1);
-            JsonNode jsonNode2 = jsonDiff.parseJson(jsonString2);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode1 = mapper.readTree(jsonString1);
+            JsonNode jsonNode2 = mapper.readTree(jsonString2);
 
             System.out.println("JsonNode Comparison ");
             System.out.println(jsonDiff.getDiff(jsonNode1, jsonNode2));

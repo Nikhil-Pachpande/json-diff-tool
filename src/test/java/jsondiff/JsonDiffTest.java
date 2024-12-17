@@ -1,6 +1,7 @@
 package jsondiff;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,6 +12,7 @@ import java.io.IOException;
 public class JsonDiffTest {
 
     private final JsonDiff jsonDiff = new JsonDiff();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void testSimpleJsonComparison() throws IOException {
@@ -86,8 +88,8 @@ public class JsonDiffTest {
         String json1 = "{\"name\": \"John\", \"age\": 25}";
         String json2 = "{\"name\": \"John\", \"age\": 26, \"country\": \"USA\"}";
 
-        JsonNode node1 = jsonDiff.parseJson(json1);
-        JsonNode node2 = jsonDiff.parseJson(json2);
+        JsonNode node1 = mapper.readTree(json1);
+        JsonNode node2 = mapper.readTree(json2);
 
         String diff = jsonDiff.getDiff(node1, node2);
 
@@ -200,8 +202,8 @@ public class JsonDiffTest {
         String json1 = "{\"name\": \"John\", \"age\": 25}";
         String json2 = "{\"name\": \"John\", \"age\": 25}";
 
-        JsonNode node1 = jsonDiff.parseJson(json1);
-        JsonNode node2 = jsonDiff.parseJson(json2);
+        JsonNode node1 = mapper.readTree(json1);
+        JsonNode node2 = mapper.readTree(json2);
 
         assertTrue(jsonDiff.isEqual(node1, node2), "Expected JSON nodes to be equal");
     }
@@ -227,8 +229,8 @@ public class JsonDiffTest {
         String json1 = "{\"name\": \"John\"}";
         String json2 = "{\"name\": \"John\", \"age\": 25}";
 
-        JsonNode node1 = jsonDiff.parseJson(json1);
-        JsonNode node2 = jsonDiff.parseJson(json2);
+        JsonNode node1 = mapper.readTree(json1);
+        JsonNode node2 = mapper.readTree(json2);
 
         assertTrue(jsonDiff.isSubset(node1, node2), "Expected JSON node1 to be a subset of JSON node2");
     }
