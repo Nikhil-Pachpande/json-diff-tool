@@ -42,7 +42,7 @@ public class JsonDiff {
      * @return A JsonNode representing the parsed JSON.
      * @throws IOException If the input string is not a valid JSON.
      */
-    public JsonNode parseJson(String jsonString) throws IOException {
+    private JsonNode parseJson(String jsonString) throws IOException {
         return objectMapper.readTree(jsonString);
     }
 
