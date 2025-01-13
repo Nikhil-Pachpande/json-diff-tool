@@ -1,5 +1,5 @@
 # JsonDiff
-A Java utility package designed to compare two JSON objects and highlight the differences between them. It provides a detailed output of differences, including missing or extra fields, value mismatches, and supports comparison for nested objects and arrays. The utility uses ANSI escape codes to colorize the output for better readability.
+A Java utility package designed to compare two JSON objects and highlight the differences between them. It provides a detailed output of differences, including missing or extra fields, value mismatches, and supports comparison for nested objects and arrays. It has implementation for ANSI escape codes to colorize the output for better readability.
 This library package is deployed using GitHub Actions and can be found at ```https://github.com/Nikhil-Pachpande/json-diff/packages/2346835```.
 
 ## Features
